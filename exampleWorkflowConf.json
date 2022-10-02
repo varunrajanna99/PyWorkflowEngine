@@ -1,0 +1,50 @@
+{
+    "name": "test_workflow",
+    "nodes": {
+        "start": {
+            "require": [],
+            "function": "add_value_to_list_elements",
+            "bot": null,
+            "input": {
+                "num": "5",
+                "value_list": "[1,2,3,4,5]"
+            },
+            "if": [
+                {
+                    "condition": "len(self.output_store.get('start')['list']) == 5",
+                    "call_node": "node3"
+                }
+            ],
+            "else": {
+                "call_node": "node2"
+            }
+        },
+        "node2": {
+            "requires": [],
+            "function": "send_email",
+            "if": [
+                {
+                    "condition": "self.output_store.get('node2') is None",
+                    "call_node": "end"
+                }
+            ]
+        },
+        "node3": {
+            "requires": [],
+            "function": null,
+            "bot": "greetings.py",
+            "bot_input": "start",
+            "on_exception": "node2",
+            "if": [
+                {
+                    "condition": "self.output_store.get('node3') == 'success'",
+                    "call_node": "end" 
+                }
+            ] 
+        },
+        "end": {
+            "requires": [],
+            "function": "print_completed"
+        }
+    }
+}
